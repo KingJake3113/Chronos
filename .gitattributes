@@ -7,3 +7,6 @@ dockerfile text eol=lf
 *.Dockerfile text eol=lf
 *.dockerfile text eol=lf
 *.sh text eol=lf
+
+# Torch model checkpoints are binary; never normalize them.
+*.lt binary

@@ -5,7 +5,7 @@ The key feature of the bob-gpu branch is that it can run your bot on the GPU ins
 
 ## 1. Preparing your bot
 
-* Clone recursively: `git clone --branch bob-gpu https://github.com/SubparN0va/GGLBot --recurse-submodules`.
+* Clone this repository. It has no nested submodules (`cpp-interface` and `inc/RocketSim` are vendored): `git clone <this repo>`.
 * Update `src/RLBotMain.cpp` with the observation builder, action parser, model configuration, and tick skip used during training.
 * Update the includes in `src/RLBotClient.h` when adding builders or parsers. Match filename case exactly; bob builds in a Linux container.
 * Put your `.lt` models in `rlbot/`.
