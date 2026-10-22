@@ -1,0 +1,33 @@
+#:schema https://rlbot.org/schemas/agent.json
+[settings]
+# Unique identifier for the bot — recommended format "developer/botname"
+agent_id = "KingJake/ChronosV2.1.1"
+# The name displayed in game / on stream
+name = "ChronosV2.1"
+# Batched inference: evaluate matching teammates together; each car gets its own action.
+# RLBot requires the key name "hivemind"; false uses separate processes.
+hivemind = true
+# Path to loadout config from runner
+loadout_file = "loadout.toml"
+# The native launcher resolves the shared LibTorch runtime before starting the bot core
+# The command RLBot will call to start your bot on Windows
+# Select cpu or gpu (default) in device.txt before building.
+run_command = "GGLBot.exe"
+# The command RLBot will call to start your bot on Linux
+run_command_linux = "./GGLBot"
+# Bot logo shown in the GUI / on stream
+logo_file = "Logo.jpg"
+
+# These values are optional but useful metadata for helper programs
+[details]
+# Short description of the bot
+description = "Chronos is a bot that can play all modes, It focuses on hitting flashy mechanics."
+# Fun fact about the bot
+fun_fact = "Was originally a flip resetting 1v1 bot, but ended up playing all 3 modes after 1v1 got good enough, currently at 200B steps."
+# Link to your repository
+source_link = ""
+# Name of the bot's creator/developer
+developer = "KingJake"
+# Programming language
+language = "C++"
+tags = ["1v1", "teamplay"]

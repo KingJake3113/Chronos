@@ -1,0 +1,17 @@
+.git/
+.gitattributes
+.gitignore
+.gitmodules
+build/
+out/
+bob_build/
+_BIN/
+_BOB_OUT/
+rlbot/000-runtime/
+rlbot/*.exe
+*.Dockerfile
+README.md
+libtorch/
+**/*.dll
+**/__pycache__/
+submission.zip
