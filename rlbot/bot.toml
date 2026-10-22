@@ -23,7 +23,7 @@ logo_file = "Logo.jpg"
 # Short description of the bot
 description = "Chronos is a bot that can play all modes, It focuses on hitting flashy mechanics."
 # Fun fact about the bot
-fun_fact = "Was originally a flip resetting 1v1 bot, but ended up playing all 3 modes after 1v1 got good enough, currently at 200B steps."
+fun_fact = "Was originally a flip resetting 1v1 bot, but ended up playing all 3 modes after 1v1 got good enough, currently at 125B steps."
 # Link to your repository
 source_link = "https://github.com/KingJake3113/Chronos"
 # Name of the bot's creator/developer
