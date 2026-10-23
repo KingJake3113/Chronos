@@ -82,12 +82,34 @@ RUN xwin --accept-license splat --output /tmp/xwin && \
     find /tmp/xwin -name "*.lib" | head -20
 
 # Stage only the selected Windows SDK; the helper supplies headers and import libraries.
+# A plain `bob build` has no staged SDK, so CPU builds fall back to the shared
+# bot-pack archive. GPU builds still require the staged CUDA SDK.
 COPY build-support/libtorch/ /tmp/libtorch-win/
 COPY cmake/ReadDevice.cmake /tmp/ReadDevice.cmake
 COPY rlbot/device.txt /tmp/gglbot-device.txt
+ARG LIBTORCH_WINDOWS_CPU_URL=https://github.com/VirxEC/pytorch-archive/releases/download/r-1/botpack_x86_64-windows.tar.xz
 RUN cmake -DDEVICE_FILE=/tmp/gglbot-device.txt -DOUTPUT_FILE=/tmp/gglbot-device \
         -P /tmp/ReadDevice.cmake && \
-    test -f /tmp/libtorch-win/local/lib/torch.lib
+    device="$(cat /tmp/gglbot-device)" && \
+    if [ -f /tmp/libtorch-win/local/lib/torch.lib ]; then \
+        cp -a /tmp/libtorch-win/local /tmp/libtorch-sdk; \
+    elif [ "$device" = cpu ]; then \
+        curl -fsSL -o /tmp/botpack-windows.tar.xz "$LIBTORCH_WINDOWS_CPU_URL" && \
+        mkdir -p /tmp/botpack-windows && \
+        tar -xJf /tmp/botpack-windows.tar.xz -C /tmp/botpack-windows && \
+        rm -f /tmp/botpack-windows.tar.xz && \
+        mkdir -p /tmp/libtorch-sdk/lib && \
+        cp -a /tmp/botpack-windows/torch-archive/torch/include /tmp/libtorch-sdk/ && \
+        for library in torch torch_cpu c10; do \
+            cp /tmp/botpack-windows/torch-archive/torch/lib/"$library".lib /tmp/libtorch-sdk/lib/; \
+        done; \
+    else \
+        echo "error: GPU builds need a staged Windows CUDA LibTorch SDK." >&2; \
+        echo "Run scripts/build_bob.py (or stage build-support/libtorch/local) and retry." >&2; \
+        exit 1; \
+    fi && \
+    test -f /tmp/libtorch-sdk/include/torch/csrc/api/include/torch/version.h && \
+    test -f /tmp/libtorch-sdk/lib/torch.lib
 
 # Linux CPU needs its platform's bot-pack archive. CUDA builds never fetch CPU archives.
 ARG LIBTORCH_LINUX_CPU_URL=https://github.com/VirxEC/pytorch-archive/releases/download/r-1/botpack_x86_64-linux.tar.xz
@@ -118,7 +140,7 @@ RUN device="$(cat /tmp/gglbot-device)" && \
     cmake -S . -B build-win -G Ninja \
         -DCMAKE_TOOLCHAIN_FILE=/src/cmake/toolchain-msvc.cmake \
         -DCMAKE_BUILD_TYPE=Release -DGGLBOT_DEVICE="$device" \
-        -D"$root"=/tmp/libtorch-win/local && \
+        -D"$root"=/tmp/libtorch-sdk && \
     cmake --build build-win --target GGLBot --parallel "$(nproc)" && \
     mkdir -p /out/x86_64-pc-windows-msvc/000-runtime && \
     cp build-win/GGLBot.exe /out/x86_64-pc-windows-msvc/ && \
